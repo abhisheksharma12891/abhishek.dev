@@ -481,6 +481,13 @@
     padding: 1.5rem;
     display: flex; gap: 1rem; align-items: flex-start;
     transition: border-color 0.2s, transform 0.2s;
+    /* Added: make the whole card a column so the button sits at bottom */
+    flex-direction: column;
+    cursor: default;
+  }
+  /* Added: inner row for icon + text (preserves original horizontal layout) */
+  .cert-card-row {
+    display: flex; gap: 1rem; align-items: flex-start; width: 100%;
   }
   .cert-card:hover { border-color: rgba(99,102,241,0.35); transform: translateY(-2px); }
   .cert-icon {
@@ -493,6 +500,128 @@
   .cert-title { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.2rem; }
   .cert-issuer { font-size: 0.8rem; color: var(--accent); margin-bottom: 0.2rem; }
   .cert-date { font-size: 0.75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+  /* Added: View Certificate button */
+  .cert-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text2);
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    align-self: flex-start;
+  }
+  .cert-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,0.06); }
+  .cert-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .cert-btn svg { flex-shrink: 0; }
+
+  /* Added: PDF Modal Overlay */
+  .cert-modal-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .cert-modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .cert-modal {
+    background: var(--bg2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    width: 100%; max-width: 860px;
+    max-height: 92vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.25s ease;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  }
+  .cert-modal-overlay.open .cert-modal { transform: translateY(0) scale(1); }
+
+  .cert-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+  .cert-modal-title {
+    font-size: 0.9rem; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 0.6rem;
+    overflow: hidden;
+  }
+  .cert-modal-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cert-modal-title svg { flex-shrink: 0; color: var(--accent); }
+  .cert-modal-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+  .cert-modal-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; font-weight: 500;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s;
+    border: 1px solid var(--glass-border);
+    color: var(--text2);
+    background: transparent;
+  }
+  .cert-modal-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,0.06); }
+  .cert-modal-btn.primary {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .cert-modal-btn.primary:hover { opacity: 0.85; }
+  .cert-modal-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .cert-modal-close {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: transparent; cursor: pointer;
+    color: var(--text2);
+    font-size: 1.1rem; line-height: 1;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .cert-modal-close:hover { border-color: rgba(239,68,68,0.5); color: #f87171; background: rgba(239,68,68,0.06); }
+  .cert-modal-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .cert-modal-body {
+    flex: 1; overflow: hidden; position: relative; min-height: 0;
+    background: var(--bg);
+  }
+  .cert-modal-body iframe {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+  /* Fallback shown when iframe fails (e.g. file not found) */
+  .cert-modal-fallback {
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 1rem; padding: 2rem; text-align: center;
+  }
+  .cert-modal-fallback.visible { display: flex; }
+  .cert-modal-fallback .fallback-icon { font-size: 3rem; opacity: 0.4; }
+  .cert-modal-fallback p { color: var(--text2); font-size: 0.9rem; }
+
+  /* Added: Responsive modal */
+  @media (max-width: 600px) {
+    .cert-modal-overlay { padding: 0.75rem; }
+    .cert-modal { max-height: 96vh; border-radius: var(--radius); }
+    .cert-modal-header { padding: 0.75rem 1rem; }
+    .cert-modal-body { min-height: 60vh; }
+    .cert-modal-actions .cert-modal-btn span { display: none; }
+    .cert-modal-btn { padding: 0.4rem 0.6rem; }
+  }
 
   /* EDUCATION */
   .edu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
@@ -1111,45 +1240,80 @@
     <h2 class="section-title reveal">Certifications & Training</h2>
     <div class="section-divider reveal"></div>
     <div class="certs-grid">
-      <div class="cert-card reveal">
-        <div class="cert-icon">📊</div>
-        <div>
-          <div class="cert-title">Data Analysis with Python</div>
-          <div class="cert-issuer">Cognitive Class — IBM Developer Skills Network</div>
-          <div class="cert-date">Nov 2025</div>
+      <!-- Added: data-cert attribute maps each card to its PDF file -->
+      <div class="cert-card reveal" data-cert="assets/certificates/data-analysis.pdf" data-cert-name="Data Analysis with Python">
+        <div class="cert-card-row">
+          <div class="cert-icon">📊</div>
+          <div>
+            <div class="cert-title">Data Analysis with Python</div>
+            <div class="cert-issuer">Cognitive Class — IBM Developer Skills Network</div>
+            <div class="cert-date">Nov 2025</div>
+          </div>
         </div>
+        <button class="cert-btn" aria-label="View certificate: Data Analysis with Python">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Certificate
+        </button>
       </div>
-      <div class="cert-card reveal reveal-delay-1">
-        <div class="cert-icon">🐍</div>
-        <div>
-          <div class="cert-title">Python 101 for Data Science</div>
-          <div class="cert-issuer">Cognitive Class — IBM Developer Skills Network</div>
-          <div class="cert-date">Oct 2025</div>
+
+      <div class="cert-card reveal reveal-delay-1" data-cert="assets/certificates/python101.pdf" data-cert-name="Python 101 for Data Science">
+        <div class="cert-card-row">
+          <div class="cert-icon">🐍</div>
+          <div>
+            <div class="cert-title">Python 101 for Data Science</div>
+            <div class="cert-issuer">Cognitive Class — IBM Developer Skills Network</div>
+            <div class="cert-date">Oct 2025</div>
+          </div>
         </div>
+        <button class="cert-btn" aria-label="View certificate: Python 101 for Data Science">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Certificate
+        </button>
       </div>
-      <div class="cert-card reveal reveal-delay-2">
-        <div class="cert-icon">💻</div>
-        <div>
-          <div class="cert-title">HTML5 & CSS3, Python (OOPs) & DBMS (SQL)</div>
-          <div class="cert-issuer">Infosys Springboard</div>
-          <div class="cert-date">2024</div>
+
+      <div class="cert-card reveal reveal-delay-2" data-cert="assets/certificates/html-css-python-dbms.pdf" data-cert-name="HTML5 & CSS3, Python (OOPs) & DBMS (SQL)">
+        <div class="cert-card-row">
+          <div class="cert-icon">💻</div>
+          <div>
+            <div class="cert-title">HTML5 & CSS3, Python (OOPs) & DBMS (SQL)</div>
+            <div class="cert-issuer">Infosys Springboard</div>
+            <div class="cert-date">2024</div>
+          </div>
         </div>
+        <button class="cert-btn" aria-label="View certificate: HTML5 & CSS3, Python (OOPs) & DBMS (SQL)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Certificate
+        </button>
       </div>
-      <div class="cert-card reveal">
-        <div class="cert-icon">🖥️</div>
-        <div>
-          <div class="cert-title">CCC — Course on Computer Concepts</div>
-          <div class="cert-issuer">NIELIT (National Institute of Electronics & IT)</div>
-          <div class="cert-date">Dec 2020</div>
+
+      <div class="cert-card reveal" data-cert="assets/certificates/ccc-nielit.pdf" data-cert-name="CCC — Course on Computer Concepts">
+        <div class="cert-card-row">
+          <div class="cert-icon">🖥️</div>
+          <div>
+            <div class="cert-title">CCC — Course on Computer Concepts</div>
+            <div class="cert-issuer">NIELIT (National Institute of Electronics & IT)</div>
+            <div class="cert-date">Dec 2020</div>
+          </div>
         </div>
+        <button class="cert-btn" aria-label="View certificate: CCC — Course on Computer Concepts">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Certificate
+        </button>
       </div>
-      <div class="cert-card reveal reveal-delay-1">
-        <div class="cert-icon">🎓</div>
-        <div>
-          <div class="cert-title">MDCA — Master Diploma in Computer Applications</div>
-          <div class="cert-issuer">Brain Server Computer & Vocational Institute</div>
-          <div class="cert-date">Jan 2021</div>
+
+      <div class="cert-card reveal reveal-delay-1" data-cert="assets/certificates/mdca.pdf" data-cert-name="MDCA — Master Diploma in Computer Applications">
+        <div class="cert-card-row">
+          <div class="cert-icon">🎓</div>
+          <div>
+            <div class="cert-title">MDCA — Master Diploma in Computer Applications</div>
+            <div class="cert-issuer">Brain Server Computer & Vocational Institute</div>
+            <div class="cert-date">Jan 2021</div>
+          </div>
         </div>
+        <button class="cert-btn" aria-label="View certificate: MDCA — Master Diploma in Computer Applications">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Certificate
+        </button>
       </div>
     </div>
   </div>
@@ -1624,6 +1788,153 @@ window.addEventListener('scroll', () => {
   updateProgress();
 })();
 // ---- End: Scroll Progress Bar ----
+
+// ---- Added: CERTIFICATE PDF MODAL ----
+(function () {
+  var overlay   = document.getElementById('certModal');
+  var frame     = document.getElementById('certModalFrame');
+  var fallback  = document.getElementById('certModalFallback');
+  var titleEl   = document.getElementById('certModalTitle');
+  var btnOpen   = document.getElementById('certModalOpen');
+  var btnDl     = document.getElementById('certModalDownload');
+  var btnClose  = document.getElementById('certModalClose');
+
+  // Track last focused element so we can restore focus on close
+  var lastFocus = null;
+
+  function openModal(certPath, certName) {
+    lastFocus = document.activeElement;
+
+    // Reset fallback visibility
+    fallback.classList.remove('visible');
+    frame.style.display = 'block';
+
+    // Set iframe src — browser renders PDF natively
+    frame.src = certPath;
+
+    // Update header title
+    titleEl.textContent = certName;
+
+    // Update action buttons
+    btnOpen.href = certPath;
+    btnDl.href   = certPath;
+    btnDl.setAttribute('download', certName + '.pdf');
+
+    // Handle iframe load error (file not found / browser blocks)
+    frame.onerror = showFallback;
+    // Some browsers fire load even on error; detect blank iframe content
+    frame.onload = function () {
+      try {
+        // If cross-origin or blank, contentDocument may be null or empty
+        if (!frame.contentDocument || frame.contentDocument.body.innerHTML === '') {
+          showFallback();
+        }
+      } catch (e) {
+        // Cross-origin restriction means the PDF loaded correctly in its own context — fine
+      }
+    };
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Move focus into modal for keyboard users
+    btnClose.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+
+    // Clear src after animation so old PDF doesn't flash on next open
+    setTimeout(function () {
+      frame.src = '';
+      fallback.classList.remove('visible');
+      frame.style.display = 'block';
+    }, 280);
+
+    // Restore focus
+    if (lastFocus) { lastFocus.focus(); lastFocus = null; }
+  }
+
+  function showFallback() {
+    frame.style.display = 'none';
+    fallback.classList.add('visible');
+  }
+
+  // Close button
+  btnClose.addEventListener('click', closeModal);
+
+  // Click outside modal panel closes it
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeModal();
+  });
+
+  // Keyboard: Escape closes; Tab trap inside modal
+  document.addEventListener('keydown', function (e) {
+    if (!overlay.classList.contains('open')) return;
+    if (e.key === 'Escape') { closeModal(); return; }
+    // Basic focus trap: Tab/Shift+Tab cycles within focusable modal elements
+    if (e.key === 'Tab') {
+      var focusable = overlay.querySelectorAll(
+        'button, a[href], [tabindex]:not([tabindex="-1"])'
+      );
+      var first = focusable[0];
+      var last  = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
+  });
+
+  // Delegate: clicking any .cert-btn or .cert-card opens the modal
+  // (only cert-btn triggers open; card itself does not, for better UX)
+  document.querySelectorAll('.cert-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var card     = btn.closest('.cert-card');
+      var certPath = card.getAttribute('data-cert');
+      var certName = card.getAttribute('data-cert-name') || 'Certificate';
+      openModal(certPath, certName);
+    });
+  });
+})();
+// ---- End: Certificate PDF Modal ----
 </script>
+<!-- Added: Certificate PDF Modal -->
+<div class="cert-modal-overlay" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle">
+  <div class="cert-modal">
+    <div class="cert-modal-header">
+      <div class="cert-modal-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <span id="certModalTitle">Certificate</span>
+      </div>
+      <div class="cert-modal-actions">
+        <a id="certModalOpen" href="#" target="_blank" rel="noopener" class="cert-modal-btn primary" aria-label="Open certificate in new tab">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>Open</span>
+        </a>
+        <a id="certModalDownload" href="#" download class="cert-modal-btn" aria-label="Download certificate PDF">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Download</span>
+        </a>
+        <button class="cert-modal-close" id="certModalClose" aria-label="Close certificate preview">✕</button>
+      </div>
+    </div>
+    <div class="cert-modal-body">
+      <iframe id="certModalFrame" title="Certificate Preview" aria-label="Certificate PDF preview"></iframe>
+      <div class="cert-modal-fallback" id="certModalFallback">
+        <div class="fallback-icon">📄</div>
+        <p>PDF preview unavailable in this browser.<br>Use the <strong>Open</strong> button above to view the certificate.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End: Certificate PDF Modal -->
+
 </body>
 </html>
