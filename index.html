@@ -781,9 +781,32 @@
 
   /* Added: nav-right wrapper to group toggle + cta */
   .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+
+  /* ============================================================
+     Added: Scroll Progress Bar
+  ============================================================ */
+  #scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 3px;
+    z-index: 9999;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    box-shadow: 0 0 8px rgba(99,102,241,0.6), 0 0 2px rgba(139,92,246,0.4);
+    border-radius: 0 2px 2px 0;
+    /* will-change hints the browser to composite this on the GPU */
+    will-change: width;
+    /* No CSS transition — width is set each rAF frame for zero lag */
+  }
+  /* End: Scroll Progress Bar */
 </style>
 </head>
 <body>
+
+<!-- Added: Scroll Progress Bar -->
+<div id="scroll-progress" role="progressbar" aria-hidden="true"></div>
+<!-- End: Scroll Progress Bar -->
 
 <!-- NAV -->
 <nav>
@@ -1577,7 +1600,30 @@ window.addEventListener('scroll', () => {
   // Set initial aria-label
   setTheme(getTheme());
 })();
-// ---- End: Theme Toggle ----
+// ---- Added: SCROLL PROGRESS BAR ----
+(function () {
+  var bar = document.getElementById('scroll-progress');
+  var ticking = false;
+
+  function updateProgress() {
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + '%';
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Initialise on load (handles cases where page restores scroll position)
+  updateProgress();
+})();
+// ---- End: Scroll Progress Bar ----
 </script>
 </body>
 </html>
