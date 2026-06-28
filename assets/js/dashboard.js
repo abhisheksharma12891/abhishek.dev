@@ -47,7 +47,7 @@ async function loadDashboard() {
 
 async function loadTotalMessages() {
 
-    const { count, error } = await supabase
+    const { count, error } = await db
 
         .from("contacts")
 
@@ -80,8 +80,12 @@ function setupLogout() {
 
 async function logout() {
 
-    await db.auth.signOut();
+    console.log("Logout clicked");
 
-    window.location.href = "login.html";
+    const { error } = await db.auth.signOut();
+
+    console.log("Signout:", error);
+
+    window.location.replace("login.html");
 
 }
