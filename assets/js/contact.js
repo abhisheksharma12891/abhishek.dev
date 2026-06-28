@@ -42,7 +42,7 @@ contactForm.addEventListener("submit", async function (e) {
 
     try {
 
-        const { error } = await supabase
+        const { error } = await db
             .from("contacts")
             .insert([
                 {

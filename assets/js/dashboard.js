@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function checkSession() {
 
-    const { data } = await supabase.auth.getSession();
+    const { data } = await db.auth.getSession();
 
     if (!data.session) {
 
@@ -80,7 +80,7 @@ function setupLogout() {
 
 async function logout() {
 
-    await supabase.auth.signOut();
+    await db.auth.signOut();
 
     window.location.href = "login.html";
 
