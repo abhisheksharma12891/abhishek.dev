@@ -1,13 +1,779 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | abhishek.dev</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+  <!-- Anti-flash theme script -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('portfolio-theme');
+      if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
+  <style>
+    /* ============================================================
+       THEME SYSTEM — from index.html
+    ============================================================ */
+    :root {
+      --radius:    12px;
+      --radius-lg: 20px;
+      --accent:    #6366f1;
+      --accent2:   #8b5cf6;
+      --accent3:   #06b6d4;
+      /* Dark (default) */
+      --bg:            #0a0a0f;
+      --bg2:           #111118;
+      --bg3:           #16161f;
+      --glass:         rgba(255,255,255,0.04);
+      --glass-border:  rgba(255,255,255,0.08);
+      --text:          #f1f5f9;
+      --text2:         #94a3b8;
+      --text3:         #64748b;
+      --nav-bg:        rgba(10,10,15,0.95);
+      --scrollbar-track: #0a0a0f;
+      --shadow-card:   rgba(0,0,0,0.4);
+      --sidebar-w:     240px;
+    }
+    [data-theme="light"] {
+      --bg:            #f8fafc;
+      --bg2:           #f1f5f9;
+      --bg3:           #e8edf5;
+      --glass:         rgba(0,0,0,0.02);
+      --glass-border:  rgba(0,0,0,0.1);
+      --text:          #0f172a;
+      --text2:         #475569;
+      --text3:         #94a3b8;
+      --nav-bg:        rgba(248,250,252,0.97);
+      --scrollbar-track: #f1f5f9;
+      --shadow-card:   rgba(0,0,0,0.1);
+    }
+
+    /* Smooth theme transitions */
+    *, *::before, *::after {
+      transition:
+        background-color 0.35s ease,
+        border-color     0.35s ease,
+        color            0.35s ease,
+        box-shadow       0.35s ease;
+    }
+    .sidebar-nav a, .btn-primary, .btn-secondary, .stat-card, .msg-row {
+      transition:
+        background-color 0.35s ease,
+        border-color     0.35s ease,
+        color            0.35s ease,
+        box-shadow       0.35s ease,
+        transform        0.18s ease,
+        opacity          0.2s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---- SCROLLBAR ---- */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    /* ============================================================
+       LAYOUT — sidebar + content
+    ============================================================ */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       SIDEBAR
+    ============================================================ */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      padding: 1.5rem 1rem;
+      overflow-y: auto;
+    }
+    .sidebar-top { display: flex; flex-direction: column; gap: 2rem; }
+
+    /* Brand */
+    .brand {
+      display: flex; flex-direction: column; gap: 0.15rem;
+      padding: 0 0.5rem;
+    }
+    .brand h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem; font-weight: 500;
+      color: var(--accent); letter-spacing: -0.02em;
+    }
+    .brand span {
+      font-size: 0.72rem; color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Nav */
+    .sidebar-nav {
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      color: var(--text2);
+      font-weight: 400;
+      position: relative;
+    }
+    .sidebar-nav a:hover {
+      background: var(--glass);
+      color: var(--text);
+    }
+    .sidebar-nav a.active {
+      background: rgba(99,102,241,0.1);
+      color: var(--accent);
+      font-weight: 500;
+      border: 1px solid rgba(99,102,241,0.15);
+    }
+    .sidebar-nav a .nav-icon { flex-shrink: 0; opacity: 0.7; }
+    .sidebar-nav a.active .nav-icon { opacity: 1; }
+
+    /* Sidebar bottom */
+    .sidebar-bottom {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 0.5rem 0;
+    }
+    .sidebar-bottom a {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      color: var(--text2);
+      border: 1px solid var(--glass-border);
+    }
+    .sidebar-bottom a:hover {
+      border-color: var(--accent);
+      background: rgba(99,102,241,0.05);
+      color: var(--accent);
+    }
+    #logoutBtn {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      color: var(--text3);
+      background: none;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+      text-align: left;
+    }
+    #logoutBtn:hover {
+      border-color: rgba(239,68,68,0.4);
+      background: rgba(239,68,68,0.05);
+      color: #f87171;
+    }
+
+    /* Sidebar divider */
+    .sidebar-divider {
+      height: 1px;
+      background: var(--glass-border);
+      margin: 0.5rem 0.5rem;
+    }
+
+    /* ============================================================
+       CONTENT
+    ============================================================ */
+    .content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* Page background glow */
+    .content::before {
+      content: '';
+      position: fixed;
+      top: 0; left: var(--sidebar-w); right: 0; bottom: 0;
+      pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 60% 0%,  rgba(99,102,241,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 90% 70%, rgba(6,182,212,0.05)  0%, transparent 60%);
+    }
+
+    /* ---- TOPBAR ---- */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+      padding: 0 2rem;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .topbar-left h1 {
+      font-size: 1rem; font-weight: 600;
+      color: var(--text);
+    }
+    .topbar-left p {
+      font-size: 0.78rem; color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+
+    /* Theme toggle — same as index.html */
+    .theme-toggle {
+      display: flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px;
+      background: var(--bg3); border: 1px solid var(--glass-border);
+      border-radius: 10px; cursor: pointer;
+      color: var(--text2); flex-shrink: 0;
+      position: relative; overflow: hidden;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,0.08); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+      position: absolute;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .theme-toggle .icon-sun  { transform: translateY(-150%) rotate(-90deg); opacity: 0; }
+    .theme-toggle .icon-moon { transform: translateY(0) rotate(0deg);        opacity: 1; }
+    [data-theme="light"] .theme-toggle .icon-sun  { transform: translateY(0) rotate(0deg);    opacity: 1; }
+    [data-theme="light"] .theme-toggle .icon-moon { transform: translateY(150%) rotate(90deg); opacity: 0; }
+
+    /* Mobile burger (shown on small screens) */
+    .topbar-burger {
+      display: none;
+      background: none; border: none;
+      color: var(--text); cursor: pointer; font-size: 1.4rem;
+    }
+
+    /* ---- PAGE BODY ---- */
+    .page-body {
+      position: relative; z-index: 1;
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 2rem;
+      flex: 1;
+    }
+
+    /* ---- WELCOME BANNER ---- */
+    .welcome {
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      position: relative; overflow: hidden;
+      box-shadow: 0 8px 32px var(--shadow-card);
+    }
+    .welcome::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    }
+    .welcome-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .welcome h2 {
+      font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .welcome p { font-size: 0.88rem; color: var(--text2); }
+
+    /* ---- STATS GRID ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      box-shadow: 0 4px 20px var(--shadow-card);
+      cursor: default;
+    }
+    .stat-card:hover {
+      border-color: rgba(99,102,241,0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--shadow-card);
+    }
+    .stat-card-top {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .stat-label {
+      font-size: 0.75rem; font-weight: 500;
+      color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .stat-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(99,102,241,0.1);
+      color: var(--accent);
+    }
+    .stat-value {
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 0.75rem; color: var(--text3);
+    }
+
+    /* ---- RECENT MESSAGES ---- */
+    .section-card {
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 8px 32px var(--shadow-card);
+    }
+    .section-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .section-card-title {
+      font-size: 0.95rem; font-weight: 600;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-card-title .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .section-label-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: var(--accent);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .section-card-body { padding: 0; }
+
+    /* Empty state */
+    .empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem; padding: 3rem 2rem;
+      color: var(--text3); text-align: center;
+    }
+    .empty-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius);
+      background: var(--bg3);
+      border: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text3);
+    }
+    .empty-state p { font-size: 0.88rem; }
+
+    /* Message rows */
+    .msg-row {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .msg-row:last-child { border-bottom: none; }
+    .msg-row:hover { background: var(--glass); }
+    .msg-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+      flex-shrink: 0;
+    }
+    .msg-content { flex: 1; min-width: 0; }
+    .msg-name {
+      font-size: 0.88rem; font-weight: 600; color: var(--text);
+    }
+    .msg-email {
+      font-size: 0.75rem; color: var(--text3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .msg-text {
+      font-size: 0.85rem; color: var(--text2);
+      margin-top: 0.25rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .msg-meta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    .msg-time { font-size: 0.72rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+    .badge-unread {
+      padding: 0.15rem 0.5rem;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 100px;
+      font-size: 0.65rem; font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      background: var(--accent); color: #fff;
+      border-radius: var(--radius);
+      font-weight: 500; font-size: 0.85rem;
+      border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.35); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--glass-border); color: var(--text);
+      border-radius: var(--radius);
+      font-weight: 500; font-size: 0.82rem;
+      background: transparent; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(99,102,241,0.05); color: var(--accent); }
+
+    /* ---- MOBILE SIDEBAR OVERLAY ---- */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 45;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      :root { --sidebar-w: 240px; }
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .content { margin-left: 0; }
+      .content::before { left: 0; }
+      .topbar-burger { display: block; }
+    }
+    @media (max-width: 600px) {
+      .page-body { padding: 1.25rem; gap: 1.25rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .topbar { padding: 0 1.25rem; }
+      .welcome { padding: 1.25rem 1.25rem; }
+      .msg-text { display: none; }
+    }
+  </style>
+</head>
 <body>
 
-<h1>Dashboard Working 🎉</h1>
+<div class="dashboard">
+
+  <!-- Mobile overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-top">
+      <a href="../../index.html" class="brand">
+        <h2>abhishek.dev</h2>
+        <span>Administrator</span>
+      </a>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="active">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          Dashboard
+        </a>
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+          Inbox
+        </a>
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
+          </span>
+          Projects
+        </a>
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="8" r="6"/>
+              <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+          </span>
+          Certificates
+        </a>
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </span>
+          Resume
+        </a>
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6"  y1="20" x2="6"  y2="14"/>
+            </svg>
+          </span>
+          Analytics
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <a href="#">
+          <span class="nav-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/>
+            </svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <a href="../../index.html" aria-label="Open portfolio site">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Open Portfolio
+      </a>
+      <button id="logoutBtn" aria-label="Logout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>Dashboard</h1>
+        <p>Welcome back 👋</p>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+          <span class="icon-sun" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </span>
+          <span class="icon-moon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </span>
+        </button>
+        <button class="topbar-burger" id="burgerBtn" aria-label="Open sidebar">☰</button>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <div class="page-body">
+
+      <!-- Welcome Banner -->
+      <section class="welcome" aria-label="Welcome">
+        <div class="welcome-inner">
+          <div>
+            <h2>Welcome Back, Abhishek 👋</h2>
+            <p>Manage your complete portfolio from one place.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="stats-grid" aria-label="Overview statistics">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-label">Total Messages</span>
+            <div class="stat-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="totalMessages">0</div>
+          <div class="stat-sub">All time</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-label">Unread</span>
+            <div class="stat-icon" style="background:rgba(6,182,212,0.1);color:var(--accent3);" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" id="unreadMessages" style="color:var(--accent3);">0</div>
+          <div class="stat-sub">Needs attention</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-label">Projects</span>
+            <div class="stat-icon" style="background:rgba(139,92,246,0.1);color:var(--accent2);" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" style="color:var(--accent2);">4</div>
+          <div class="stat-sub">Published</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-label">Certificates</span>
+            <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#6ee7b7;" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value" style="color:#6ee7b7;">18</div>
+          <div class="stat-sub">Earned</div>
+        </div>
+      </section>
+
+      <!-- Recent Messages -->
+      <section class="section-card" aria-label="Recent messages">
+        <div class="section-card-header">
+          <div class="section-card-title">
+            <span class="dot" aria-hidden="true"></span>
+            Recent Messages
+          </div>
+          <span class="section-label-mono">inbox</span>
+        </div>
+        <div class="section-card-body" id="recent-body">
+          <div class="empty-state">
+            <div class="empty-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+            </div>
+            <p>No messages yet.</p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /page-body -->
+  </main>
+
+</div><!-- /dashboard -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../assets/js/supabase.js"></script>
+<script src="../../assets/js/dashboard.js"></script>
+
+<script>
+  /* ---- THEME TOGGLE ---- */
+  (function () {
+    const STORAGE_KEY = 'portfolio-theme';
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'light') html.setAttribute('data-theme', 'light');
+
+    function getTheme() { return html.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+    function setTheme(theme) {
+      if (theme === 'light') html.setAttribute('data-theme', 'light');
+      else html.removeAttribute('data-theme');
+      localStorage.setItem(STORAGE_KEY, theme);
+      toggleBtn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+    }
+    toggleBtn.addEventListener('click', () => setTheme(getTheme() === 'light' ? 'dark' : 'light'));
+    setTheme(getTheme());
+  })();
+
+  /* ---- MOBILE SIDEBAR ---- */
+  (function () {
+    var sidebar  = document.getElementById('sidebar');
+    var overlay  = document.getElementById('sidebarOverlay');
+    var burgerBtn = document.getElementById('burgerBtn');
+
+    function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('open'); }
+    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+    burgerBtn.addEventListener('click', function () {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar on nav link click (mobile)
+    document.querySelectorAll('.sidebar-nav a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (window.innerWidth <= 900) closeSidebar();
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>
