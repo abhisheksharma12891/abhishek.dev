@@ -1,103 +1,486 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | abhishek.dev</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Anti-flash theme script -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('portfolio-theme');
+      if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
 
-    <title>Admin Login | abhishek.dev</title>
+  <style>
+    /* ============================================================
+       THEME SYSTEM — from index.html
+    ============================================================ */
+    :root {
+      --radius:    12px;
+      --radius-lg: 20px;
+      --accent:    #6366f1;
+      --accent2:   #8b5cf6;
+      --accent3:   #06b6d4;
+      --bg:            #0a0a0f;
+      --bg2:           #111118;
+      --bg3:           #16161f;
+      --glass:         rgba(255,255,255,0.04);
+      --glass-border:  rgba(255,255,255,0.08);
+      --text:          #f1f5f9;
+      --text2:         #94a3b8;
+      --text3:         #64748b;
+      --scrollbar-track: #0a0a0f;
+      --shadow-card:   rgba(0,0,0,0.4);
+    }
+    [data-theme="light"] {
+      --bg:            #f8fafc;
+      --bg2:           #f1f5f9;
+      --bg3:           #e8edf5;
+      --glass:         rgba(0,0,0,0.02);
+      --glass-border:  rgba(0,0,0,0.1);
+      --text:          #0f172a;
+      --text2:         #475569;
+      --text3:         #94a3b8;
+      --scrollbar-track: #f1f5f9;
+      --shadow-card:   rgba(0,0,0,0.1);
+    }
 
-    <meta name="robots" content="noindex,nofollow">
+    *, *::before, *::after {
+      transition:
+        background-color 0.35s ease,
+        border-color     0.35s ease,
+        color            0.35s ease,
+        box-shadow       0.35s ease;
+    }
+    .btn-primary, .back-link, .form-input, .theme-toggle {
+      transition:
+        background-color 0.35s ease,
+        border-color     0.35s ease,
+        color            0.35s ease,
+        box-shadow       0.35s ease,
+        transform        0.18s ease,
+        opacity          0.2s ease;
+    }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    /* ---- SCROLLBAR ---- */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-    <link rel="stylesheet" href="../../assets/css/theme.css">
+    /* ---- PAGE BACKGROUND ---- */
+    .page-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 85% 70%,  rgba(6,182,212,0.07)  0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 10% 80%,  rgba(139,92,246,0.07) 0%, transparent 60%);
+    }
 
-    <link rel="stylesheet" href="../../assets/css/login.css">
+    /* ---- THEME TOGGLE (top-right) ---- */
+    .theme-toggle {
+      position: fixed; top: 1.25rem; right: 1.5rem;
+      z-index: 50;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      cursor: pointer; color: var(--text2);
+      position: fixed;
+      overflow: hidden;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,0.08); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+      position: absolute;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .theme-toggle .icon-sun  { transform: translateY(-150%) rotate(-90deg); opacity: 0; }
+    .theme-toggle .icon-moon { transform: translateY(0) rotate(0deg);        opacity: 1; }
+    [data-theme="light"] .theme-toggle .icon-sun  { transform: translateY(0) rotate(0deg);    opacity: 1; }
+    [data-theme="light"] .theme-toggle .icon-moon { transform: translateY(150%) rotate(90deg); opacity: 0; }
 
+    /* ---- LOGIN PAGE ---- */
+    .login-page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1.25rem;
+    }
 
+    /* ---- LOGIN CARD ---- */
+    .login-card {
+      width: 100%; max-width: 420px;
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem 2.25rem 2.25rem;
+      box-shadow: 0 24px 64px var(--shadow-card);
+      position: relative; overflow: hidden;
+      animation: fadeScaleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .login-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    }
+    @keyframes fadeScaleIn {
+      from { opacity: 0; transform: scale(0.95) translateY(16px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
 
+    /* ---- LOGO ---- */
+    .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem; font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
 
+    /* ---- HEADING ---- */
+    .login-card h1 {
+      font-size: 1.6rem; font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+    .subtitle {
+      font-size: 0.88rem; color: var(--text2);
+      margin-bottom: 2rem;
+    }
+
+    /* ---- FORM ---- */
+    .form-group {
+      display: flex; flex-direction: column; gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      font-size: 0.8rem; font-weight: 500;
+      color: var(--text3);
+    }
+    .input-wrapper {
+      position: relative; display: flex; align-items: center;
+    }
+    .input-icon {
+      position: absolute; left: 0.9rem;
+      color: var(--text3); pointer-events: none;
+      display: flex; align-items: center;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 0.8rem 1rem 0.8rem 2.6rem;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-input::placeholder { color: var(--text3); }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+
+    /* Password toggle */
+    .pw-toggle {
+      position: absolute; right: 0.9rem;
+      background: none; border: none;
+      cursor: pointer; color: var(--text3);
+      display: flex; align-items: center;
+      padding: 0;
+    }
+    .pw-toggle:hover { color: var(--text2); }
+
+    /* ---- SUBMIT BUTTON ---- */
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%;
+      padding: 0.82rem 1.75rem;
+      background: var(--accent); color: #fff;
+      border-radius: var(--radius);
+      font-weight: 500; font-size: 0.92rem;
+      border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 0.5rem;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* ---- LOGIN MESSAGE ---- */
+    #loginMessage {
+      font-size: 0.83rem;
+      min-height: 1.4rem;
+      margin-top: 0.75rem;
+      text-align: center;
+      border-radius: 8px;
+    }
+    #loginMessage.error {
+      padding: 0.6rem 0.9rem;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: #f87171;
+    }
+    #loginMessage.success {
+      padding: 0.6rem 0.9rem;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      color: #6ee7b7;
+    }
+
+    /* ---- DIVIDER ---- */
+    .divider {
+      width: 100%; height: 1px;
+      background: var(--glass-border);
+      margin: 1.5rem 0 1.25rem;
+    }
+
+    /* ---- BACK LINK ---- */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.82rem; color: var(--text3);
+    }
+    .back-link:hover { color: var(--accent); }
+
+    /* ---- BADGE (admin lock) ---- */
+    .admin-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.18);
+      border-radius: 100px;
+      font-size: 0.72rem; color: #a5b4fc;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 1.25rem;
+    }
+    .badge-lock { color: var(--accent); display: flex; align-items: center; }
+
+    /* ---- LIGHT MODE ---- */
+    [data-theme="light"] .form-input { background: #fff; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 480px) {
+      .login-card { padding: 2.25rem 1.5rem 1.75rem; }
+    }
+  </style>
 </head>
-
 <body>
 
+<!-- Background -->
+<div class="page-bg" aria-hidden="true"></div>
+
+<!-- Theme toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme" style="position:fixed;top:1.25rem;right:1.5rem;z-index:50;">
+  <span class="icon-sun" aria-hidden="true">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </span>
+  <span class="icon-moon" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+    </svg>
+  </span>
+</button>
+
+<!-- LOGIN PAGE -->
 <main class="login-page">
+  <div class="login-card">
 
-    <div class="login-card">
-
-        <div class="logo">
-            abhishek.dev
-        </div>
-
-        <h1>Portfolio Admin</h1>
-
-        <p class="subtitle">
-            Sign in to access your dashboard
-        </p>
-
-        <form id="loginForm">
-
-            <div class="form-group">
-
-                <label>Email</label>
-
-                <input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    required>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Password</label>
-
-                <input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    required>
-
-            </div>
-
-            <button
-                id="loginBtn"
-                type="submit">
-
-                Login Securely
-
-            </button>
-
-            <p id="loginMessage"></p>
-
-        </form>
-
-        <a
-            class="back-link"
-            href="../../index.html">
-
-            ← Back to Portfolio
-
-        </a>
-
+    <!-- Logo -->
+    <div class="logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      abhishek.dev
     </div>
 
+    <!-- Admin badge -->
+    <div class="admin-badge">
+      <span class="badge-lock" aria-hidden="true">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+      </span>
+      Restricted Access
+    </div>
+
+    <h1>Portfolio Admin</h1>
+    <p class="subtitle">Sign in to access your dashboard</p>
+
+    <!-- Form -->
+    <form id="loginForm" novalidate>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-wrapper">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
+          <input
+            id="email"
+            type="email"
+            class="form-input"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+            aria-label="Email address">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </span>
+          <input
+            id="password"
+            type="password"
+            class="form-input"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+            aria-label="Password">
+          <button type="button" class="pw-toggle" id="pwToggle" aria-label="Toggle password visibility">
+            <svg id="eyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button id="loginBtn" type="submit" class="btn-primary" aria-label="Login securely">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Login Securely
+      </button>
+
+      <p id="loginMessage" role="alert" aria-live="assertive"></p>
+
+    </form>
+
+    <div class="divider"></div>
+
+    <a class="back-link" href="../../index.html" aria-label="Back to portfolio">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Back to Portfolio
+    </a>
+
+  </div>
 </main>
 
 <!-- Supabase -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="../../assets/js/supabase.js"></script>
-
 <script src="../../assets/js/auth.js"></script>
 
-</body>
+<script>
+  /* ---- THEME TOGGLE ---- */
+  (function () {
+    const STORAGE_KEY = 'portfolio-theme';
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
 
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'light') html.setAttribute('data-theme', 'light');
+
+    function getTheme() { return html.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+    function setTheme(theme) {
+      if (theme === 'light') html.setAttribute('data-theme', 'light');
+      else html.removeAttribute('data-theme');
+      localStorage.setItem(STORAGE_KEY, theme);
+      toggleBtn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+    }
+    toggleBtn.addEventListener('click', () => setTheme(getTheme() === 'light' ? 'dark' : 'light'));
+    setTheme(getTheme());
+  })();
+
+  /* ---- PASSWORD VISIBILITY TOGGLE ---- */
+  (function () {
+    var pwInput  = document.getElementById('password');
+    var pwToggle = document.getElementById('pwToggle');
+    var eyeIcon  = document.getElementById('eyeIcon');
+
+    var eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    var eyeSlash = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+    pwToggle.addEventListener('click', function () {
+      var isPassword = pwInput.type === 'password';
+      pwInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.innerHTML = isPassword ? eyeSlash : eyeOpen;
+      pwToggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    });
+  })();
+
+  /* ---- STYLE loginMessage from auth.js output ---- */
+  /* auth.js sets #loginMessage.textContent — intercept to add classes */
+  (function () {
+    var msg = document.getElementById('loginMessage');
+    var observer = new MutationObserver(function () {
+      var text = msg.textContent.trim();
+      msg.classList.remove('error', 'success');
+      if (!text) return;
+      if (
+        text.toLowerCase().includes('invalid') ||
+        text.toLowerCase().includes('error') ||
+        text.toLowerCase().includes('wrong') ||
+        text.toLowerCase().includes('fail') ||
+        text.toLowerCase().includes('incorrect')
+      ) {
+        msg.classList.add('error');
+      } else {
+        msg.classList.add('success');
+      }
+    });
+    observer.observe(msg, { childList: true, subtree: true, characterData: true });
+  })();
+</script>
+
+</body>
 </html>
