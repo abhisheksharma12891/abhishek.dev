@@ -2,7 +2,9 @@
 // Dashboard Initialization
 // =============================
 
+
 document.addEventListener("DOMContentLoaded", async () => {
+
     console.log("Dashboard Loaded ✅");
 
     await checkSession();
@@ -10,8 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadDashboard();
 
     setupLogout();
-});
 
+});
 
 // =============================
 // Session Protection
@@ -37,6 +39,8 @@ async function checkSession() {
 async function loadDashboard() {
 
     await loadTotalMessages();
+
+    await loadRecentMessages();
 
 }
 
@@ -64,6 +68,63 @@ async function loadTotalMessages() {
     document.getElementById("totalMessages").textContent = count;
 
 }
+
+
+// 👇👇 YAHAN PASTE KARNA HAI
+
+
+// =============================
+// Recent Messages
+// =============================
+
+async function loadRecentMessages() {
+    const { data, error } = await db
+        .from("contacts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(5);
+    if (error) {
+        console.error(error);
+        return;
+    }
+    renderMessages(data);
+}
+function renderMessages(messages) {
+    const container = document.getElementById("messagesList");
+    if (!container) return;
+    if (!messages || messages.length === 0) {
+        container.innerHTML = `
+            <p class="empty-state">
+                No messages found.
+            </p>
+        `;
+        return;
+    }
+    container.innerHTML = messages.map(message => `
+        <div class="message-card">
+            <div class="message-header">
+                <strong>${message.name}</strong>
+                <span>${new Date(message.created_at).toLocaleDateString()}</span>
+            </div>
+            <p class="message-email">
+                ${message.email}
+            </p>
+            <h4>
+                ${message.subject}
+            </h4>
+            <p>
+                ${(message.message || "").substring(0,100)}
+                ${message.message && message.message.length > 100 ? "..." : ""}
+            </p>
+        </div>
+    `).join("");
+}
+
+
+
+
+
+
 
 
 // =============================
