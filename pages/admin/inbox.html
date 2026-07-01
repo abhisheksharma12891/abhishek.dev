@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inbox | abhishek.dev</title>
+
+    <meta name="robots" content="noindex,nofollow">
+
+    <!-- Google Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Theme Loader -->
+
+    <script>
+
+        (() => {
+
+            const theme = localStorage.getItem("portfolio-theme");
+
+            if (theme === "light") {
+
+                document.documentElement.setAttribute("data-theme", "light");
+
+            }
+
+        })();
+
+    </script>
+
+    <style>
+        :root {
+
+            --accent: #6366f1;
+            --accent2: #8b5cf6;
+
+            --bg: #0a0a0f;
+            --bg2: #111118;
+            --bg3: #16161f;
+
+            --text: #f8fafc;
+            --text2: #94a3b8;
+            --text3: #64748b;
+
+            --border: rgba(255, 255, 255, .08);
+
+            --radius: 16px;
+
+            --sidebar: 250px;
+
+        }
+
+        [data-theme="light"] {
+
+            --bg: #f8fafc;
+            --bg2: #ffffff;
+            --bg3: #eef2ff;
+
+            --text: #0f172a;
+            --text2: #475569;
+            --text3: #94a3b8;
+
+            --border: rgba(15, 23, 42, .08);
+
+        }
+
+        * {
+
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            font-family: "Inter", sans-serif;
+
+            background: var(--bg);
+
+            color: var(--text);
+
+        }
+
+        a {
+
+            color: inherit;
+
+            text-decoration: none;
+
+        }
+
+
+        .dashboard {
+
+            display: flex;
+
+            min-height: 100vh;
+
+        }
+
+        .sidebar {
+
+            width: var(--sidebar);
+
+            background: var(--bg2);
+
+            border-right: 1px solid var(--border);
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
+            padding: 30px 20px;
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            bottom: 0;
+
+        }
+
+        .brand {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+
+            margin-bottom: 40px;
+
+        }
+
+        .brand h2 {
+
+            color: var(--accent);
+
+            font-family: "JetBrains Mono", monospace;
+
+            font-size: 18px;
+
+        }
+
+        .brand span {
+
+            color: var(--text3);
+
+            font-size: 12px;
+
+        }
+
+        .sidebar-nav {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+        }
+
+        .sidebar-nav a {
+
+            padding: 12px 14px;
+
+            border-radius: 12px;
+
+            color: var(--text2);
+
+            transition: .3s;
+
+        }
+
+        .sidebar-nav a:hover {
+
+            background: var(--bg3);
+
+            color: var(--text);
+
+        }
+
+        .sidebar-nav .active {
+
+            background: rgba(99, 102, 241, .12);
+
+            color: var(--accent);
+
+        }
+
+        .sidebar-bottom {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+
+        }
+
+        .sidebar-bottom a,
+
+        #logoutBtn {
+
+            padding: 12px;
+
+            border-radius: 12px;
+
+            border: 1px solid var(--border);
+
+            background: none;
+
+            color: var(--text2);
+
+            cursor: pointer;
+
+            text-align: left;
+
+            font: inherit;
+
+        }
+
+        .content {
+
+            margin-left: 250px;
+
+            flex: 1;
+
+            min-height: 100vh;
+
+        }
+
+        /* ===========================
+TOPBAR
+=========================== */
+
+        .topbar {
+
+            height: 70px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 0 40px;
+
+            border-bottom: 1px solid var(--border);
+
+            background: var(--bg2);
+
+        }
+
+        .topbar-left h1 {
+
+            font-size: 24px;
+
+        }
+
+        .topbar-left p {
+
+            color: var(--text3);
+
+            font-size: 14px;
+
+        }
+
+        .topbar-right input {
+
+            width: 300px;
+
+            padding: 12px 16px;
+
+            background: var(--bg);
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            color: var(--text);
+
+            outline: none;
+
+        }
+
+        .page-body {
+
+            padding: 40px;
+
+        }
+
+        .page-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+
+        }
+
+        .page-header h2 {
+
+            margin-bottom: 6px;
+
+        }
+
+        .page-header p {
+
+            color: var(--text3);
+
+        }
+
+        .filters {
+
+            display: flex;
+
+            gap: 12px;
+
+        }
+
+        .filter-btn {
+
+            padding: 10px 18px;
+
+            border-radius: 12px;
+
+            border: 1px solid var(--border);
+
+            background: transparent;
+
+            color: var(--text2);
+
+            cursor: pointer;
+
+        }
+
+        .filter-btn.active {
+
+            background: var(--accent);
+
+            color: white;
+
+            border-color: var(--accent);
+
+        }
+
+        /* ===========================
+MESSAGE TABLE
+=========================== */
+
+        .messages-section {
+
+            margin-top: 30px;
+
+        }
+
+        .messages-table {
+
+            background: var(--bg2);
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            overflow: hidden;
+
+        }
+
+        .table-header {
+
+            display: grid;
+
+            grid-template-columns:
+                1.2fr 1.8fr 1.5fr .9fr .8fr .8fr;
+
+            gap: 20px;
+
+            padding: 18px 24px;
+
+            background: var(--bg3);
+
+            font-weight: 600;
+
+            color: var(--text);
+
+        }
+
+        .loading-state {
+
+            padding: 80px;
+
+            text-align: center;
+
+            color: var(--text3);
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-top">
+
+                <a href="../../index.html" class="brand">
+
+                    <h2>abhishek.dev</h2>
+
+                    <span>Administrator</span>
+
+                </a>
+
+                <nav class="sidebar-nav">
+
+                    <a href="dashboard.html">
+
+                        Dashboard
+
+                    </a>
+
+                    <a href="inbox.html" class="active">
+
+                        Inbox
+
+                    </a>
+
+                    <a href="#">
+
+                        Projects
+
+                    </a>
+
+                    <a href="#">
+
+                        Certificates
+
+                    </a>
+
+                    <a href="#">
+
+                        Resume
+
+                    </a>
+
+                    <a href="#">
+
+                        Analytics
+
+                    </a>
+
+                    <a href="#">
+
+                        Settings
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+            <div class="sidebar-bottom">
+
+                <a href="../../index.html">
+
+                    Open Portfolio
+
+                </a>
+
+                <button id="logoutBtn">
+
+                    Logout
+
+                </button>
+
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+
+        <main class="content">
+
+
+            <!-- ===========================
+     TOPBAR
+=========================== -->
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <h1>Inbox</h1>
+
+                    <p>Manage all contact form messages</p>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <input type="text" id="searchInput" placeholder="Search messages...">
+
+                </div>
+
+            </header>
+
+
+            <!-- ===========================
+     PAGE BODY
+=========================== -->
+
+            <div class="page-body">
+
+                <section class="page-header">
+
+                    <div>
+
+                        <h2>
+
+                            All Messages
+
+                        </h2>
+
+                        <p>
+
+                            View, search and manage every contact request.
+
+                        </p>
+
+                    </div>
+
+                    <div class="filters">
+
+                        <button class="filter-btn active">
+
+                            All
+
+                        </button>
+
+                        <button class="filter-btn">
+
+                            Unread
+
+                        </button>
+
+                        <button class="filter-btn">
+
+                            Read
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ===========================
+     MESSAGE TABLE
+=========================== -->
+
+                <section class="messages-section">
+
+                    <div class="messages-table">
+
+                        <div class="table-header">
+
+                            <div>Name</div>
+
+                            <div>Email</div>
+
+                            <div>Subject</div>
+
+                            <div>Date</div>
+
+                            <div>Status</div>
+
+                            <div>Actions</div>
+
+                        </div>
+
+                        <div id="messagesContainer">
+
+                            <div class="loading-state">
+
+                                Loading messages...
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
